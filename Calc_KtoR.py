@@ -7,6 +7,7 @@ from ecdsa import SECP256k1
 
 def CreateR(k: int):
     return (k * SECP256k1.generator).x() % SECP256k1.order
+    
 r = CreateR(k)
 r_hex = hex(r)[2:].upper()
 
