@@ -1,7 +1,10 @@
-from ecdsa import SECP256k1
+#!pip install ecdsa
 
-prefix = "222"
-start_k = 97550250915353978318189854416261922300439940533550735609205232015416706969856
+# Finding the K value that contains part of the R value (Pollards Rho)
+SearchStartKvalue = 97550250915353978318189854416261922300439940533550735609205232015416706969856
+FindRPartial = "222"
+
+from ecdsa import SECP256k1
 
 def CreateR(k: int):
     G = SECP256k1.generator
@@ -10,12 +13,12 @@ def CreateR(k: int):
     r = P.x() % n
     return r
 
-def pollards_rho_with_prefix(prefix, start_k=1):
+def pollards_rho_with_prefix(pFindRPartial="", pSearchStartKvalue=1):
     def f(x):
       return (x*x + 1) % SECP256k1.order
 
-    tortoise = start_k
-    hare = start_k
+    tortoise = pSearchStartKvalue
+    hare = pSearchStartKvalue
 
     while True:
         tortoise = f(tortoise)
@@ -28,20 +31,19 @@ def pollards_rho_with_prefix(prefix, start_k=1):
         r_hex_hare = hex(r_hare)[2:].upper()
 
         #if prefix in r_hex_tortoise:
-        if r_hex_tortoise.startswith(prefix):
-             return tortoise, r_hex_tortoise
+        if r_hex_tortoise.startswith(pFindRPartial):
+             return tortoise,r_tortoise, r_hex_tortoise
 
         #if prefix in r_hex_hare:
-        if r_hex_hare.startswith(prefix):
-            return hare, r_hex_hare
+        if r_hex_hare.startswith(pFindRPartial):
+            return hare, r_hare, r_hex_hare
 
         if tortoise == hare:
              return None, None
 
-k, r_hex = pollards_rho_with_prefix(prefix, start_k)
+k,r, r_hex = pollards_rho_with_prefix(FindRPartial, SearchStartKvalue)
 
-if k:
-    print(f"Found k: {k}")
-    print(f"R(HEX): {r_hex}")
-else:
-    print("k not found")
+print(f"Found K: {k}")
+print(f"R: {r}")
+print(f"R (hex): {r_hex}")
+
