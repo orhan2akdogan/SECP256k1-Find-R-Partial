@@ -2,7 +2,7 @@
 
 # Finding the K value that contains part of the R value (Standart)
 SearchStartKvalue = 1
-FindRPartial = 123
+FindRPartial = "123"
 
 from ecdsa import SECP256k1
 
@@ -13,14 +13,14 @@ def CreateR(k: int):
     r = P.x() % n
     return r
     
-def find_k_with_prefix(prefix, start_k):
-    k = start_k
+def find_k_with_prefix(pFindRPartial="", pSearchStartKvalue=1):
+    k = pSearchStartKvalue
     while True:
         r = CreateR(k)
         r_hex = hex(r)[2:].upper()
-        if r_hex.startswith(prefix):
-        #if prefix in r_hex:
-        #if r_hex.endswith(prefix):
+        if r_hex.startswith(pFindRPartial):
+        #if pFindRPartial in r_hex:
+        #if r_hex.endswith(pSearchStartKvalue):
             return k,r, r_hex
         k += 1
 
